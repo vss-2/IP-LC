@@ -8,3 +8,10 @@ $ ghci (executa o Glasgow Haskell Compiler Interactive)
 :module -/+ Main  -- Descarrega/Carrega o módulo
 :r ou :reload     -- Recarrega o módulo (faça isso após salvar o arquivo)
 ```
+
+## Curiosidades:
+Divisão é feita por padrão entre doubles, então: 4/3 = 1.33333333
+Divisão entre inteiros depende do operador div
+Operador ++ concatena coisas (Strings, listas, etc)
+Operador /= é o != em outras linguagens
+Letras em case minúsculo são tipos genéricos
