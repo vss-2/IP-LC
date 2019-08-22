@@ -10,8 +10,8 @@ $ ghci (executa o Glasgow Haskell Compiler Interactive)
 ```
 
 ## Curiosidades:
-Divisão é feita por padrão entre doubles, então: 4/3 = 1.33333333 <br>
-Divisão entre inteiros depende do operador div <br>
-Operador ++ concatena coisas (Strings, listas, etc) <br>
-Operador /= é o != em outras linguagens <br> 
-Letras em case minúsculo são tipos genéricos <br>
+* Divisão é feita por padrão entre doubles, então: 4/3 = 1.33333333 <br>
+* Divisão entre inteiros depende do operador div <br>
+* Operador ++ concatena coisas (Strings, listas, etc) <br>
+* Operador /= é o != em outras linguagens <br> 
+* Letras em case minúsculo são tipos genéricos <br>
