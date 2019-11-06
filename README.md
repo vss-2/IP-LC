@@ -19,4 +19,4 @@ $ ghci (executa o Glasgow Haskell Compiler Interactive)
 
 ## Threads
 
-* Join: chamado (t.join()) deve ser cerceado por try-catch; <br> Faz com que a thread que chamou espere que outra termine a execução
+* Join: chamado (t.join()), deve ser cerceado por try-catch; <br> Faz com que a thread que chamou espere que outra (t) termine a execução
