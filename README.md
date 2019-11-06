@@ -15,3 +15,8 @@ $ ghci (executa o Glasgow Haskell Compiler Interactive)
 * Operador ++ concatena coisas (Strings, listas, etc) <br>
 * Operador /= é o != em outras linguagens <br> 
 * Letras em case minúsculo são tipos genéricos <br>
+
+
+## Threads
+
+* Join: chamado (t.join()) deve ser cerceado por try-catch; <br> Faz com que a thread que chamou espere que outra termine a execução
