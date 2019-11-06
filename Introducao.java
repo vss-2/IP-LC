@@ -99,3 +99,81 @@ thread que terminar a contagem primeiro (realizar
 todas as iterações) deve interromper todas as outras
 que estão executando.
 */
+
+// Valor X = Número de Threads
+static int X = 5;
+// Valor N = Limite 
+static int N = 1000;
+
+public class ThreadPrimeira extends Thread
+{
+    public static int contador = 0;
+    public static long[] primos = new long[10000];
+    // Array onde colocarei os primos
+    // Contador para avançar o array
+
+    static long proximoNumero = 3;
+    // Pontapé para o método sincronizado
+    // proximoNumero ter uma base para começar 
+
+    public void run()
+    {
+        long inicio;
+        while((inicio = proximoNumero()) <= N)
+        {
+            primos[0] = 2;
+            if(ePrimo(inicio))
+            {
+                primos[contador++] = inicio;
+            }
+        }
+    }
+
+    // De forma sincronizada, vê o próximo 
+    // valor a ser calculado.
+    public static synchronized long proximoNumero()
+    {
+        long n = proximoNumero; 
+        proximoNumero += 2;
+        return n;
+    }
+
+    // Verifica se é primo
+    public boolean ePrimo(long n)
+    {
+        int p;
+        for(p = 3; p * p <= n; p += 2)
+        {
+            if(n%i == 0) return false;
+        }
+        return true;
+    }
+}
+
+public class PrimeiraQuestao implements Runnable 
+{
+    public static void main(String args[])
+    {
+        ThreadPrimeira[] tp = new ThreadPrimeira[X];
+
+        long tInicio = System.currentTimeMillis();
+
+        for(int f = 0; f < X; f++)
+        {
+            tp[f] = new ThreadPrimeira();
+            tp[f].start();
+        }
+
+        long tFim = System.currentTimeMillis();
+
+        System.out.println("Demorou (em milissegundos): "+ tFim-tInicio);
+
+        System.out.println("Primos: ")
+
+        for(int f = 0; f < ThreadPrimeira.contador; f++)
+        {
+            System.out.println(ThreadPrimeira.primos[f]);
+        }
+
+    }
+}
