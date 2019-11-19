@@ -2,6 +2,27 @@ import Control.Concurrent
 import Control.Concurrent.MVar
 import Control.Concurrent.STM
 
+-- A versão original, sem comentários é está na bolha: tiny.cc/bolha
+
+-- MVar: 
+-- Podem ser vazias, são usadas para implementar padrões sincronizados entre threads
+-- a comunicação é "one-way" entre as mesmas, são mais rápidas que TVar, 
+-- mas podem dar deadlock.
+-- Se você for usar operações do tipo putMVar ou takeMVar,
+-- diga no início (::) que a variável é do tipo MVar, detalhes:
+-- http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Concurrent-MVar.html
+-- Como esperado: putMVar altera (se estiver vazio) o valor de uma MVar, senão espera
+-- e o takeMVar pega e tira o valor de uma MVar, se estiver vazio, espera
+
+-- TVar: 
+-- São variáveis de transição, mais lentas, mas mais seguras, não podem ser vazias
+-- são compartilhadas entre threads e implementadas de forma atômica.
+-- Se você for usar operações do tipo writeTVar ou readTVar,
+-- diga no início (::) que a variável é do tipo TVar, detalhes:
+-- http://hackage.haskell.org/package/stm-2.5.0.0/docs/Control-Concurrent-STM-TVar.html
+-- Como esperado: writeTVar escreve o valor (só isso) na TVar
+-- e o readTVar retorna o valor de uma TVar (só isso)
+
 -- Sua função: verifica se após fim (modificado pelas threads) chegou a zero.
 -- Encerra o loop caso sim, encerrando o main que encerra as threads
 waitThreads :: MVar Int -> IO ()
@@ -53,14 +74,14 @@ consumidor pao carne tomate faca fim = do
 main :: IO ()
 main = do
     -- Inicia estoque inicial dos ingredientes
-    let qtdIng = 30
+    qtdIng = 30
     pao    <- atomically (newTVar qtdIng)
     carne  <- atomically (newTVar qtdIng)
     tomate <- atomically (newTVar qtdIng)
 
     -- Controla a concorrência 
     -- (quantidade de execuções e o objeto de disputa: faca)
-    let qntExec = 20
+    qntExec = 20
     lockFaca <- newMVar 0
     qntExec = newMVar qntExec
 
