@@ -73,6 +73,10 @@ consumidor pao carne tomate faca fim = do
 
 main :: IO ()
 main = do
+    -- atomically() é usado para dizer que vamos usar STM
+    -- Software Transction Memory, ou seja, estamos dizendo 
+    -- que a variável será compartilhada pra threads
+    
     -- Inicia estoque inicial dos ingredientes
     qtdIng = 30
     pao    <- atomically (newTVar qtdIng)
@@ -87,6 +91,8 @@ main = do
 
     -- A partir de agora, pode-se iniciar a execução
 
+    -- forkIO seria tipo um new Thread + run(), criando a Thread e
+    -- chamando o método com seus parâmetros, e executando
     -- Iniciando as threads: 1 produtora, 2 consumidoras
     forkIO(produtor pao carne tomate qtdExec)
     forkIO(consumidor pao carne tomate lockFaca qtdExec)
