@@ -2,6 +2,8 @@ import java.lang.*;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 
+// O .size() não está funcionando!
+
 public class Produtor implements Runnable {
     private ArrayBlockingQueue<Integer> abqp;
 
@@ -35,7 +37,7 @@ public class Consumidor implements Runnable {
         for(int f = 0; f < abqc.size(); f++){
             // Consumindo valores do array
             try {
-                System.out.printf("Consumi o: %d\n",this.abqc.take());
+                System.out.printf("Consumi: %d\n",this.abqc.take());
             } catch (InterruptedException ie) {}
         }
     }
