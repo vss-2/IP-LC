@@ -1,4 +1,5 @@
 import java.lang.*;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class Produtor implements Runnable {
@@ -15,6 +16,7 @@ public class Produtor implements Runnable {
             try {
                 System.out.printf("Produzi: %d\n", f);
                 this.abqp.put(f);
+                Thread.sleep(500);
             } catch (InterruptedException ie) {}
         }
     }
@@ -44,7 +46,7 @@ public class ProdutorConsumidor {
         ArrayBlockingQueue<Integer> abq = new ArrayBlockingQueue<Integer>(1000);
         
         Thread produtor = new Thread(new Produtor(abq));
-        Thread consumidor = new Thread(new Produtor(abq));
+        Thread consumidor = new Thread(new Consumidor(abq));
 
         produtor.start();
         consumidor.start();
