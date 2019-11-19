@@ -19,7 +19,9 @@ public class BlockingQueue {
                 notifyAll();
             } else {
                 // Senão couber, espera caber
-                wait();
+                try {
+                    wait();
+                } catch (InterruptedException e) {}
             }
         }
     }
@@ -28,7 +30,9 @@ public class BlockingQueue {
         synchronized(this.fb){
             if(this.fb[0] == null){
                 // Se não tiver ninguém, espera
-                wait();
+                try {
+                    wait();
+                } catch (InterruptedException e) {}
             } else {
                 // Senão, há alguém, retorne-o
                 Object output = this.fb[0];
