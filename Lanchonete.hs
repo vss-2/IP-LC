@@ -4,6 +4,7 @@ import Control.Concurrent.STM
 
 -- Sua função: verifica se após fim (modificado pelas threads) chegou a zero.
 -- Encerra o loop caso sim, encerrando o main que encerra as threads
+waitThreads :: MVar Int -> IO ()
 waitThreads fim = do
     f <- takeMVar fim
     if (f > 0) then do
@@ -14,6 +15,7 @@ waitThreads fim = do
 
 
 -- Isso é tipo classe, setta as quantidades fornecidas e se chama
+produtor :: Int -> Int -> Int -> MVar Int -> IO ()
 produtor pao carne tomate fim = do
     fimAtual <- takeMVar fim
     atomically (do
@@ -26,6 +28,7 @@ produtor pao carne tomate fim = do
     produtor pao carne tomate fim
 
 -- Isso é tipo classe, consome os produtos, e se chama de novo
+consumidor :: Int -> Int -> Int -> MVar Int -> IO ()
 consumidor pao carne tomate faca fim = do
     -- Fim == quantida de execuções
     direitoFaca <- takeMVar faca
@@ -47,7 +50,7 @@ consumidor pao carne tomate faca fim = do
     putMVar fim (fimAtual-1)
     consumidor pao carne tomate faca fim
 
-
+main :: IO ()
 main = do
     -- Inicia estoque inicial dos ingredientes
     let qtdIng = 30
@@ -67,6 +70,7 @@ main = do
     forkIO(produtor pao carne tomate qtdExec)
     forkIO(consumidor pao carne tomate lockFaca qtdExec)
     forkIO(consumidor pao carne tomate lockFaca qtdExec)
-
+    waitThreads fim
+    return ()
     -- O main chamou as threads,
     -- elas executam waitThreads e depois o código acaba
