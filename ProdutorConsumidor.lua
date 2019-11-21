@@ -14,3 +14,11 @@ producer = coroutine.create(
 		send(x)
 		end
 	end)
+
+consumer = coroutine.create(
+	function()
+		while true do
+			local x = receive()
+			io.write(x,"\n")
+		end
+	end
