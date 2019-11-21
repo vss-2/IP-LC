@@ -49,7 +49,7 @@ produtor pao carne tomate fim = do
     produtor pao carne tomate fim
 
 -- Isso é tipo classe, consome os produtos, e se chama de novo
-consumidor :: Int -> Int -> Int -> MVar Int -> IO ()
+consumidor :: Int -> Int -> Int -> MVar Int -> MVar Int -> IO ()
 consumidor pao carne tomate faca fim = do
     -- Fim == quantida de execuções
     direitoFaca <- takeMVar faca
