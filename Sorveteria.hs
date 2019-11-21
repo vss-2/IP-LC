@@ -48,9 +48,8 @@ main = do
     lockRMR <- newMVar 0
     qntExec = newMVar qntExec
 
-    forkIO(produtor aroma qtdExec)
-    forkIO(produtor espessante qtdExec)
+    forkIO(produtor aroma lockRMR qtdExec)
+    forkIO(produtor espessante lockRMR qtdExec)
     forkIO(consumidor aroma espessante lockRMR qtdExec)
     waitThreads fim
     return ()
-
