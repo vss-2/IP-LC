@@ -1,0 +1,314 @@
+
+==========================================QUESTAO 1=======================================
+
+package ProdutoConsumidor;
+
+public class Principal {
+	public static void main(String[] args) {
+		
+		Drop drop = new Drop();
+
+		Produtor threadP = new Produtor(drop);
+		Thread trp = new Thread(threadP);
+		trp.start();
+		
+		Consumidor threadC = new Consumidor(drop);
+		Thread trc = new Thread(threadC);
+		trc.start();
+		
+	}
+}
+
+package ProdutoConsumidor;
+
+import java.util.Random;
+
+public class Consumidor implements Runnable {
+    private Drop drop;
+    
+    public Consumidor(Drop drop) {
+        this.drop = drop;
+    }
+    
+    
+    public void run() {
+        Random random = new Random();
+        
+        
+        
+        for (int i = this.drop.take(); i!= -1; i = drop.take()) {
+            try {
+                Thread.sleep(random.nextInt(500));                
+            } catch (InterruptedException e) {}
+        }
+    }
+}
+
+package ProdutoConsumidor;
+
+import java.util.Random;
+
+public class Produtor implements Runnable {
+	private Drop drop;
+	
+	public Produtor(Drop drop) {
+		this.drop = drop;
+	}
+
+	public void run() {
+		Random random = new Random();
+		
+		for (int i = 0; i < 10; i++) {
+			drop.put(random.nextInt(10));
+			try {
+				Thread.sleep(random.nextInt(500));
+			} catch (InterruptedException e) {
+
+			}
+			
+		}
+
+	}
+}
+
+
+package ProdutoConsumidor;
+
+public class Drop {
+    private int [] valores = new int [4];
+    private boolean cheio = false;
+    private int tamanho = 0;
+    
+    public synchronized int take() {
+        while (!cheio) {
+            try {
+                wait();
+            } catch (InterruptedException e) {}
+        }
+        
+        if(tamanho-1 == 0) {
+        	cheio = false;
+        }
+        
+        int retirada = this.valores[tamanho];
+        this.valores[tamanho] = -1;
+        System.out.println("Removeu o valor " + retirada);
+        tamanho--;
+        notifyAll();
+        return retirada;
+    }
+    
+    public synchronized void put(int valor) {
+        while (cheio) {
+            try { 
+                wait();
+            } catch (InterruptedException e) { }
+        }
+        
+        
+        this.valores[tamanho] = valor;
+        System.out.println("Inseriu o valor " + valor);
+        tamanho++;
+        
+        if(tamanho == this.valores.length) {
+        	cheio = true;
+        }else {
+        	cheio = false;
+        }
+        
+        notifyAll();
+    }
+}
+
+
+==========================================QUESTAO 2=======================================
+
+package filabloqueante;
+
+public class Principal {
+
+	public static void main(String[] args) {
+		fila filabloq = new fila();
+		
+		for(int i = 0; i<5; i++) {
+			MinhaThread threadR = new MinhaThread("@Lucas", filabloq);
+			Thread tr = new Thread(threadR);
+			tr.start();
+		}
+		
+		System.out.println("Fim");
+	}
+
+}
+
+package filabloqueante;
+
+public class MinhaThread implements Runnable {
+	private String nome;
+	private fila fila;
+	
+    public MinhaThread(String nome, fila fila) {
+        this.nome = nome;
+        this.fila = fila;
+    }
+    
+    
+    public void run() {
+        this.fila.inserir(1);
+        this.fila.inserir(2);
+        this.fila.inserir(3);
+        this.fila.inserir(4);
+        this.fila.remover();
+        this.fila.remover();
+        this.fila.remover();
+        this.fila.remover();
+        this.fila.remover();
+    }
+	
+	
+}
+
+
+package filabloqueante;
+
+public class fila {
+	private int tamanho = 0;
+	private Integer [] fila = new Integer[10];
+	
+	public void inserir(int k) {
+		synchronized(this) {
+			while(this.tamanho == this.fila.length) {
+				try {
+					System.out.println("Fila cheia");
+					wait();
+				} catch(InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			this.fila[tamanho] = k;
+			System.out.println("Inserindo " + this.fila[tamanho]);
+			tamanho++;
+			notifyAll();
+		}
+	}
+	
+	public int remover() {
+		synchronized(this) {
+			while(this.tamanho == 0) {
+				try {
+					System.out.println("Fila vazia");
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			tamanho--;
+			int cabeca = this.fila[0];
+			for(int i = 0; i<this.fila.length-1; i++) {
+				this.fila[i]=this.fila[i+1];
+			}
+			this.fila[this.fila.length-1]=null;
+			notifyAll();
+			System.out.println("Removendo "+cabeca);
+			return cabeca;
+		}
+	}
+	
+}
+
+==========================================QUESTAO 3=======================================
+
+import Control.Concurrent
+import Control.Concurrent.STM
+
+main = do
+    porca <- atomically(newTVar 0)
+    parafuso <- atomically(newTVar 0)
+
+    forkIO $ fornecedor parafuso
+    forkIO $ fornecedor porca
+
+    forkIO $ preparador porca parafuso
+    forkIO $ preparador porca parafuso
+
+    final <- newMVar 1
+    waitThreads final
+
+waitThreads fim = do
+    aux <- takeMVar fim
+    if aux == 0
+    then return()
+    else do
+        putMVar fim aux
+        waitThreads fim
+
+fornecedor p = do
+    p1 <- atomically(readTVar p)
+    print "fornecendo produto"
+    atomically(do{
+        writeTVar p 10;
+    })
+    threadDelay 1000000
+    fornecedor p
+
+preparador porc paraf = do
+
+    porcAux <- atomically(readTVar porc)
+    parafAux <- atomically(readTVar paraf)
+
+    if (porcAux>0) && (parafAux>0)
+    then do 
+        atomically (do{
+            writeTVar porc (porcAux-1);
+            writeTVar paraf (parafAux-1);
+        })
+        print "porca-parafuso produzido"
+    else print "sem materiais"
+
+    threadDelay 500000
+    preparador porc paraf
+
+==========================================QUESTAO 4=======================================
+
+function poli (tupla)
+    return function (x)
+        print(tupla[1]*x*x + tupla[2]*x + tupla[3])
+    end
+end
+
+f = poli({3,0,1})
+print(f(0))
+
+
+==========================================QUESTAO 5=======================================
+
+function receive()
+    local status, value = coroutine.resume(producer)
+    return value
+end
+
+function send(x)
+    print("enviando valor")
+    coroutine.yield(x)
+end
+
+consumer = coroutine.create(
+    function()
+    while true do 
+        local x = receive() 
+        io.write(x, "\n") 
+    end
+end)
+
+producer = coroutine.create(
+    function()
+    local i = 0
+    while true do 
+        local x = io.read() 
+        send(x) 
+        i = i + 1
+    end
+end)
+
+coroutine.resume(consumer)
